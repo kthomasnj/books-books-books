@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-
-import { createUser } from '../utils/API';
+import { useMutation } from '@apollo/client';
+import { ADD_USER } from '../utils/mutations';
+// import { createUser } from '../utils/API';
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
@@ -11,6 +12,8 @@ const SignupForm = () => {
   const [validated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+
+  const [addUser, { error }] = useMutation(ADD_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,15 +31,18 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await createUser(userFormData);
+      const { data } = await addUser({
+        variables: { ...userFormData },
+      });
+      // const response = await createUser(userFormData);
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
 
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
+      // const { token, user } = await response.json();
+      console.log(data);
+      Auth.login(data.addUser.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
@@ -62,7 +68,7 @@ const SignupForm = () => {
           <Form.Label htmlFor='username'>Username</Form.Label>
           <Form.Control
             type='text'
-            placeholder='Your username'
+            placeholder='Enter Your Username'
             name='username'
             onChange={handleInputChange}
             value={userFormData.username}
@@ -75,7 +81,7 @@ const SignupForm = () => {
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
             type='email'
-            placeholder='Your email address'
+            placeholder='Enter Your Email Address'
             name='email'
             onChange={handleInputChange}
             value={userFormData.email}
@@ -88,7 +94,7 @@ const SignupForm = () => {
           <Form.Label htmlFor='password'>Password</Form.Label>
           <Form.Control
             type='password'
-            placeholder='Your password'
+            placeholder='Enter Your Password'
             name='password'
             onChange={handleInputChange}
             value={userFormData.password}
@@ -100,7 +106,7 @@ const SignupForm = () => {
           disabled={!(userFormData.username && userFormData.email && userFormData.password)}
           type='submit'
           variant='success'>
-          Submit
+          SUBMIT
         </Button>
       </Form>
     </>
