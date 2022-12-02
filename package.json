@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "apollo-server-express": "^3.11.1",
-    "heroku": "^7.67.1"
+    "heroku": "^7.67.1",
+    "heroku-cli": "^7.0.9"
   }
 }
